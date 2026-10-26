@@ -4,3 +4,6 @@ dist/
 playwright-report/
 test-results/
 .local/
+
+# Generated from the pinned MediaPipe package by postinstall/prebuild.
+public/pose/

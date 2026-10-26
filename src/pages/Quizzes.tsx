@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { levels } from '../data';
+import { practiceQuizzes } from '../quizQuestions';
 import { useProgress, levelUnlocked } from '../progress';
 import { Badge, ButtonLink, Celebration, Eyebrow, PageIntro, ProgressBar } from '../components/UI';
 import { Field } from '../components/Art';
@@ -33,7 +34,8 @@ export function Quizzes() {
       >
         Big soccer brains are built one question at a time.
         <br />
-        Try a quiz, learn from every answer, and keep growing.
+        Fresh practice questions, different from your academy exams. Practice scores do not unlock
+        levels or add XP.
       </PageIntro>
       <div className="quiz-overview">
         <div className="quiz-rules">
@@ -53,14 +55,12 @@ export function Quizzes() {
         <div className="quiz-list">
           {levels.map((l) => {
             const unlocked = levelUnlocked(progress, l.id);
-            const score = progress.quizzes[l.id];
+            const score = progress.practiceQuizzes?.[l.id];
             return (
               <div key={l.id} className={`quiz-select ${!unlocked ? 'muted' : ''}`}>
                 <span className="quiz-index">0{l.id}</span>
                 <div>
-                  <Eyebrow>
-                    {l.id === 5 ? 'THE CHAMPION FINAL' : `LEVEL ${l.id} KNOWLEDGE CHECK`}
-                  </Eyebrow>
+                  <Eyebrow>{l.id === 5 ? 'CHAMPION PRACTICE' : `LEVEL ${l.id} PRACTICE`}</Eyebrow>
                   <h2>{l.name}</h2>
                   <p>
                     {l.quiz.length} questions ·{' '}
@@ -77,7 +77,7 @@ export function Quizzes() {
                     </span>
                   )}
                   {unlocked ? (
-                    <ButtonLink to={`/quiz/${l.id}`} secondary>
+                    <ButtonLink to={`/practice-quiz/${l.id}`} secondary>
                       Let’s play
                     </ButtonLink>
                   ) : (
@@ -103,11 +103,13 @@ function shuffle<T>(items: T[]) {
   }
   return result;
 }
-function QuizGame({ levelId }: { levelId: number }) {
+function QuizGame({ levelId, practice = false }: { levelId: number; practice?: boolean }) {
   const level = levels[levelId - 1];
   const { progress, act } = useProgress();
   const reduced = useReducedMotion();
-  const [questions, setQuestions] = useState(() => shuffle(level.quiz));
+  const bank = practice ? practiceQuizzes[levelId] : level.quiz;
+  const best = practice ? progress.practiceQuizzes?.[levelId] : progress.quizzes[levelId];
+  const [questions, setQuestions] = useState(() => shuffle(bank));
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [score, setScore] = useState(0);
@@ -124,7 +126,7 @@ function QuizGame({ levelId }: { levelId: number }) {
   function next() {
     if (selected === null) return;
     if (index === questions.length - 1) {
-      act({ type: 'quiz', id: levelId, score });
+      act({ type: practice ? 'practiceQuiz' : 'quiz', id: levelId, score });
       setFinished(true);
     } else {
       setIndex((i) => i + 1);
@@ -133,7 +135,7 @@ function QuizGame({ levelId }: { levelId: number }) {
     }
   }
   function retry() {
-    setQuestions(shuffle(level.quiz));
+    setQuestions(shuffle(bank));
     setIndex(0);
     setSelected(null);
     setScore(0);
@@ -142,9 +144,9 @@ function QuizGame({ levelId }: { levelId: number }) {
   }
   return (
     <div className="shell page quiz-page">
-      <Link to="/quizzes" className="back-link">
+      <Link to={practice ? '/quizzes' : `/academy/${levelId}`} className="back-link">
         <ArrowLeft size={16} />
-        All quizzes
+        {practice ? 'All practice quizzes' : 'Back to my academy level'}
       </Link>
       {finished ? (
         <div className="quiz-result">
@@ -185,14 +187,14 @@ function QuizGame({ levelId }: { levelId: number }) {
               <strong>{score}</strong>Points this round
             </span>
             <span>
-              <strong>
-                {Math.round(((progress.quizzes[levelId] ?? 0) / (questions.length * 10)) * 100)}%
-              </strong>
+              <strong>{Math.round(((best ?? 0) / (questions.length * 10)) * 100)}%</strong>
               Personal best
             </span>
           </div>
           <p className="small-note">
-            Your best quiz score counts toward total XP. Repeats don’t add duplicate points.
+            {practice
+              ? 'Practice scores are saved separately. Complete your academy exam to earn XP and unlock levels.'
+              : 'Your best academy quiz score counts toward total XP. Repeats don’t add duplicate points.'}
           </p>
           <div className="result-actions">
             <button className="button secondary" onClick={retry}>
@@ -209,9 +211,16 @@ function QuizGame({ levelId }: { levelId: number }) {
           <div className="quiz-heading">
             <div>
               <Eyebrow>
-                LEVEL 0{levelId} / {level.name.toUpperCase()}
+                {practice ? 'PRACTICE QUIZ' : 'ACADEMY EXAM'} / LEVEL 0{levelId} /{' '}
+                {level.name.toUpperCase()}
               </Eyebrow>
-              <h1>{levelId === 5 ? 'The champion final.' : 'Your next little challenge.'}</h1>
+              <h1>
+                {practice
+                  ? 'Your practice challenge.'
+                  : levelId === 5
+                    ? 'The champion final.'
+                    : 'Your next little challenge.'}
+              </h1>
             </div>
             <div className="quiz-live-score">
               <Zap size={19} fill="currentColor" />
@@ -304,11 +313,11 @@ function QuizGame({ levelId }: { levelId: number }) {
     </div>
   );
 }
-export function QuizPage() {
+export function QuizPage({ practice = false }: { practice?: boolean }) {
   const { levelId } = useParams();
   const l = levels.find((l) => l.id === Number(levelId));
   const { progress } = useProgress();
   if (!l) return <NotFound />;
   if (!levelUnlocked(progress, l.id)) return <Locked id={l.id} />;
-  return <QuizGame key={l.id} levelId={l.id} />;
+  return <QuizGame key={`${practice}-${l.id}`} levelId={l.id} practice={practice} />;
 }

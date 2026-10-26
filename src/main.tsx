@@ -32,6 +32,7 @@ const router = createBrowserRouter([
       { path: 'academy/:levelId/lesson/:lessonId', element: <LessonPage /> },
       { path: 'quizzes', element: <Quizzes /> },
       { path: 'quiz/:levelId', element: <QuizPage /> },
+      { path: 'practice-quiz/:levelId', element: <QuizPage practice /> },
       { path: 'training', element: <Training /> },
       { path: 'training/:missionId', element: <MissionPage /> },
       { path: 'coach', element: <Coach /> },

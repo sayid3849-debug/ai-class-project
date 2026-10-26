@@ -1,3 +1,4 @@
+import { academyQuizzes } from './quizQuestions';
 export type Question = {
   prompt: string;
   options: string[];
@@ -249,7 +250,7 @@ export const levels: Level[] = [
         'field',
       ),
     ],
-    quiz: basics,
+    quiz: academyQuizzes[1],
   },
   {
     id: 2,
@@ -313,7 +314,7 @@ export const levels: Level[] = [
         true,
       ),
     ],
-    quiz: positions,
+    quiz: academyQuizzes[2],
   },
   {
     id: 3,
@@ -376,7 +377,7 @@ export const levels: Level[] = [
         'control',
       ),
     ],
-    quiz: skills,
+    quiz: academyQuizzes[3],
   },
   {
     id: 4,
@@ -444,7 +445,7 @@ export const levels: Level[] = [
         'pass',
       ),
     ],
-    quiz: rules,
+    quiz: academyQuizzes[4],
   },
   {
     id: 5,
@@ -508,12 +509,7 @@ export const levels: Level[] = [
         'pass',
       ),
     ],
-    quiz: [
-      ...basics.slice(0, 3),
-      ...positions.slice(0, 4),
-      ...skills.slice(0, 4),
-      ...rules.slice(0, 4),
-    ],
+    quiz: academyQuizzes[5],
   },
 ];
 export const challenges = [

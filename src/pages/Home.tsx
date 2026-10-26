@@ -289,12 +289,12 @@ export default function Home() {
               <span className="serif">A whole new game.</span>
             </h2>
             <p>
-              Discover what smart soccer coaching could look like. Explore our interactive AI Coach
-              demonstration.
+              See visible body positions in a private practice video and find your next training
+              step. Or explore a clearly labeled example report.
             </p>
             <ButtonLink to="/coach">Meet your AI coach</ButtonLink>
             <small className="demo-disclaimer">
-              DEMO MODE · Example feedback. No video uploads.
+              PRIVATE VIDEO COACH · Clips stay on your device.
             </small>
           </div>
           <div className="coach-preview">
