@@ -36,6 +36,7 @@ test('major pages and reward states pass automated accessibility checks', async 
     await audit(route);
   }
   await page.goto('/coach');
+  await page.getByRole('button', { name: 'Explore example demo' }).click();
   await page.getByRole('button', { name: 'Explore example report' }).click();
   await audit('coach report');
   await page.evaluate(

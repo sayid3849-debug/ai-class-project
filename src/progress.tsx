@@ -1,15 +1,18 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { levels } from './data';
+import { practiceQuizzes } from './quizQuestions';
 export const STORAGE_KEY = 'skill-learn-progress-v1';
 export type Progress = {
   lessons: string[];
   quizzes: Record<string, number>;
+  practiceQuizzes?: Record<string, number>;
   challenges: number[];
   training: Record<string, { count: number; assisted: boolean; hits?: number }>;
 };
 export const emptyProgress = (): Progress => ({
   lessons: [],
   quizzes: {},
+  practiceQuizzes: {},
   challenges: [],
   training: {},
 });
@@ -44,6 +47,17 @@ export function loadProgress(raw: string | null): Progress {
           score % 10 === 0
         )
           result.quizzes[l.id] = score;
+      }
+      for (const l of levels) {
+        const score = p.practiceQuizzes?.[l.id];
+        if (
+          typeof score === 'number' &&
+          Number.isInteger(score) &&
+          score >= 0 &&
+          score <= practiceQuizzes[l.id].length * 10 &&
+          score % 10 === 0
+        )
+          result.practiceQuizzes![l.id] = score;
       }
       if (p.training && typeof p.training === 'object')
         for (const id of result.challenges) {
@@ -105,6 +119,7 @@ export function levelPercent(p: Progress, id: number) {
 export type Action =
   | { type: 'lesson'; id: string }
   | { type: 'quiz'; id: number; score: number }
+  | { type: 'practiceQuiz'; id: number; score: number }
   | { type: 'challenge'; id: number; count: number; assisted: boolean; hits?: number }
   | { type: 'reset' };
 export function reduceProgress(p: Progress, a: Action): Progress {
@@ -114,6 +129,25 @@ export function reduceProgress(p: Progress, a: Action): Progress {
     return !l || !levelUnlocked(p, l.id) || p.lessons.includes(a.id)
       ? p
       : { ...p, lessons: [...p.lessons, a.id] };
+  }
+  if (a.type === 'practiceQuiz') {
+    const bank = practiceQuizzes[a.id];
+    if (
+      !bank ||
+      !levelUnlocked(p, a.id) ||
+      !Number.isInteger(a.score) ||
+      a.score < 0 ||
+      a.score > bank.length * 10 ||
+      a.score % 10 !== 0
+    )
+      return p;
+    return {
+      ...p,
+      practiceQuizzes: {
+        ...p.practiceQuizzes,
+        [a.id]: Math.max(p.practiceQuizzes?.[a.id] ?? 0, a.score),
+      },
+    };
   }
   if (a.type === 'quiz') {
     const l = levels[a.id - 1];

@@ -64,7 +64,7 @@ export default function App() {
                   : label === 'AI Soccer Coach'
                     ? 'AI Coach'
                     : label}
-              {to === '/coach' && <span className="tiny-tag">DEMO</span>}
+              {to === '/coach' && <span className="tiny-tag">AI</span>}
             </NavLink>
           ))}
         </nav>

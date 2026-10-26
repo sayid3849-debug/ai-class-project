@@ -354,27 +354,43 @@ export function Parents() {
               devices.
             </p>
             <p>
-              We do not ask for names, contact details, or video uploads. No child profiles or
-              public leaderboards are created. There are no analytics trackers in this app. Browser
-              read-aloud uses your browser’s speech service, whose voice availability and processing
-              depend on your device and browser settings.
+              We do not ask for names or contact details. Videos chosen for coaching stay in browser
+              memory and are never uploaded or stored. No child profiles or public leaderboards are
+              created. There are no analytics trackers in this app. Browser read-aloud uses your
+              browser’s speech service, whose voice availability and processing depend on your
+              device and browser settings.
             </p>
           </section>
           <section>
             <Eyebrow>04 / HONEST ABOUT AI</Eyebrow>
-            <h2>A demonstration, clearly labeled.</h2>
+            <h2>Private video coaching, honest limits.</h2>
             <p>
-              The AI Soccer Coach shows original illustrated movements and prewritten sample
-              reports. Ratings are examples, not real measurements. No model processes videos and no
-              uploads are enabled.
+              The coach can read a short video file on this device. A local MediaPipe AI model
+              detects visible body landmarks in sampled frames. Simple coaching rules turn those
+              observations and the selected skill into practice suggestions. Video, pose frames, and
+              reports are not uploaded, stored in localStorage, or shared. Remove the video or leave
+              the coach page to clear it.
             </p>
             <p>
-              Future video analysis is a concept only. It would require verified parental consent,
-              private storage, controlled access, and reliable deletion safeguards before accepting
-              any child’s media.
+              A parent or guardian should help select a clip and confirm permission from everyone
+              shown. This confirmation is not verified parental identity. Choose one player in a
+              safe space, with their whole body and feet visible. Clips must last 3–30 seconds and
+              be under 25 MB.
+            </p>
+            <p>
+              Pose estimates depend on camera angle and may be wrong. The model does not track the
+              ball, score overall technique, diagnose injuries, or measure shooting accuracy. Poor
+              footage gets a request to record again rather than invented feedback. The separate
+              example mode still shows prewritten sample ratings, clearly labeled as a demo. No real
+              videos are used in that example.
+            </p>
+            <p>
+              There is no camera capture or cloud upload endpoint. Any future external video service
+              would require a separate consent and privacy system with verified parental consent,
+              controlled access, and deletion safeguards.
             </p>
             <ButtonLink to="/coach" secondary>
-              Explore the coach demo
+              Open the video coach
             </ButtonLink>
           </section>
           <section className="reset-panel">

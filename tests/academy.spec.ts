@@ -96,8 +96,11 @@ test('quiz retry, feedback, and truthful coach demonstration', async ({ page }) 
   await expect(page.locator('.quiz-live-score')).toContainText('0');
   await expect(page.locator('.progress-label')).toContainText('Question 1 of 5');
   await page.goto('/coach');
+  await page.getByRole('button', { name: 'Explore example demo' }).click();
   await expect(page.locator('.demo-label')).toContainText('DEMO MODE');
-  await expect(page.getByText('No AI video analysis is running.', { exact: false })).toBeVisible();
+  await expect(
+    page.getByText('No AI video analysis is running in this example mode.', { exact: false }),
+  ).toBeVisible();
   await expect(page.locator('input[type=file]')).toHaveCount(0);
   for (const skill of ['Dribbling', 'Passing', 'Shooting', 'Ball Control']) {
     await page.getByRole('button', { name: skill, exact: false }).first().click();
